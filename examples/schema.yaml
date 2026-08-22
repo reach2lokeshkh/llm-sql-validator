@@ -1,0 +1,66 @@
+# Example schema configuration for llm-sql-validator
+# This defines the tables and columns that LLM-generated queries are validated against.
+
+dialect: redshift
+
+schemas:
+  public:
+    users:
+      columns:
+        id: { type: integer, primary_key: true }
+        first_name: { type: varchar }
+        last_name: { type: varchar }
+        email: { type: varchar, pii: true }
+        phone: { type: varchar, pii: true }
+        ssn: { type: varchar, pii: true }
+        created_at: { type: timestamp }
+        updated_at: { type: timestamp }
+        is_deleted: { type: boolean, soft_delete: true }
+        account_status: { type: varchar }
+      row_estimate: 10_000_000
+
+    orders:
+      columns:
+        id: { type: integer, primary_key: true }
+        user_id: { type: integer, foreign_key: users.id }
+        order_date: { type: date }
+        amount: { type: decimal }
+        currency: { type: varchar }
+        status: { type: varchar }
+        promo_code: { type: varchar }
+        channel: { type: varchar }
+        created_at: { type: timestamp }
+      row_estimate: 500_000_000
+
+    products:
+      columns:
+        id: { type: integer, primary_key: true }
+        name: { type: varchar }
+        category: { type: varchar }
+        price: { type: decimal }
+        cost: { type: decimal }
+        sku: { type: varchar }
+        is_active: { type: boolean }
+        launch_date: { type: date }
+      row_estimate: 50_000
+
+    order_items:
+      columns:
+        id: { type: integer, primary_key: true }
+        order_id: { type: integer, foreign_key: orders.id }
+        product_id: { type: integer, foreign_key: products.id }
+        quantity: { type: integer }
+        unit_price: { type: decimal }
+        discount_amount: { type: decimal }
+      row_estimate: 2_000_000_000
+
+    marketing_campaigns:
+      columns:
+        id: { type: integer, primary_key: true }
+        campaign_name: { type: varchar }
+        start_date: { type: date }
+        end_date: { type: date }
+        budget: { type: decimal }
+        channel: { type: varchar }
+        target_segment: { type: varchar }
+      row_estimate: 5_000

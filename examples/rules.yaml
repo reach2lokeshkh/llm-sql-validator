@@ -1,0 +1,38 @@
+# Example business rules for llm-sql-validator
+# These rules enforce domain-specific policies on LLM-generated SQL.
+
+rules:
+  # Queries on orders must always include a date range filter
+  - name: require_date_filter_on_orders
+    description: "Queries on the orders table must include a date range filter to prevent full table scans on 500M+ rows."
+    target_tables: [orders]
+    rule_type: required_filter
+    filter_columns: [order_date]
+
+  # PII columns cannot be selected without masking
+  - name: block_pii_without_masking
+    description: "PII columns (email, phone, ssn) cannot be selected without a masking function."
+    rule_type: forbidden_columns
+    columns_with_tag: pii
+    unless_wrapped_in: [mask, hash, anonymize, md5, sha2]
+
+  # Always filter out soft-deleted records
+  - name: enforce_soft_delete
+    description: "Always filter out soft-deleted records from the users table."
+    target_tables: [users]
+    rule_type: required_filter
+    filter_columns: [is_deleted]
+
+  # Large tables require LIMIT or WHERE
+  - name: limit_on_large_tables
+    description: "Queries on tables with >100M rows must have LIMIT or WHERE clause."
+    rule_type: row_limit
+    row_threshold: 100_000_000
+    max_limit: 10000
+
+  # Order items queries must filter by order or date
+  - name: require_filter_on_order_items
+    description: "order_items has 2B rows — queries must include a filter on order_id or join with orders."
+    target_tables: [order_items]
+    rule_type: required_filter
+    filter_columns: [order_id]
