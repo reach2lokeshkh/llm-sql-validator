@@ -79,7 +79,6 @@ class SchemaValidator(BaseValidator):
             # Validate table references
             for table_node in stmt.find_all(exp.Table):
                 table_name = table_node.name.lower()
-                schema_name = (table_node.db or "").lower()
 
                 if table_name and table_name not in all_tables:
                     suggestion = self._suggest_table(table_name, all_tables)

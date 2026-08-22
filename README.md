@@ -7,7 +7,7 @@ Stop shipping broken SQL to production. `llm-sql-validator` catches errors that 
 [![PyPI version](https://img.shields.io/pypi/v/llm-sql-validator.svg)](https://pypi.org/project/llm-sql-validator/)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-[![Tests](https://img.shields.io/badge/tests-passing-brightgreen.svg)]()
+[![CI](https://github.com/reach2lokeshkh/llm-sql-validator/actions/workflows/ci.yml/badge.svg)](https://github.com/reach2lokeshkh/llm-sql-validator/actions/workflows/ci.yml)
 
 ---
 

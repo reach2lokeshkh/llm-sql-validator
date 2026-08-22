@@ -3,7 +3,6 @@
 import pytest
 
 from llm_sql_validator.validators.safety import SafetyValidator
-from llm_sql_validator.result import ValidationStatus
 
 
 @pytest.fixture

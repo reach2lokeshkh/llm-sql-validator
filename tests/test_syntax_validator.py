@@ -2,8 +2,8 @@
 
 import pytest
 
-from llm_sql_validator.validators.syntax import SyntaxValidator
 from llm_sql_validator.result import ValidationStatus
+from llm_sql_validator.validators.syntax import SyntaxValidator
 
 
 @pytest.fixture
@@ -35,7 +35,7 @@ class TestSyntaxValidator:
 
     def test_valid_subquery(self, validator):
         sql = """
-        SELECT * FROM users 
+        SELECT * FROM users
         WHERE id IN (SELECT user_id FROM orders WHERE amount > 100)
         """
         result = validator.validate(sql)

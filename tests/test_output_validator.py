@@ -2,8 +2,8 @@
 
 import pytest
 
-from llm_sql_validator.validators.output import OutputValidator, AntiExample
 from llm_sql_validator.result import ValidationStatus
+from llm_sql_validator.validators.output import AntiExample, OutputValidator
 
 
 @pytest.fixture

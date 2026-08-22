@@ -2,9 +2,8 @@
 
 import pytest
 
-from llm_sql_validator.validators.business_rules import BusinessRulesValidator
 from llm_sql_validator.result import ValidationStatus
-
+from llm_sql_validator.validators.business_rules import BusinessRulesValidator
 
 SAMPLE_SCHEMA = {
     "public": {

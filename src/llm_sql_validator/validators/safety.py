@@ -200,7 +200,10 @@ class SafetyValidator(BaseValidator):
                 return ValidationError(
                     tier=self.tier,
                     code="CARTESIAN_JOIN",
-                    message="JOIN without ON condition detected — this may produce a cartesian product.",
+                    message=(
+                        "JOIN without ON condition detected — "
+                        "this may produce a cartesian product."
+                    ),
                     suggestion="Add an ON clause to specify the join condition.",
                     severity="error",
                 )

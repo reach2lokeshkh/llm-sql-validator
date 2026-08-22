@@ -3,8 +3,7 @@
 import pytest
 
 from llm_sql_validator import ValidationPipeline, ValidatorConfig
-from llm_sql_validator.result import ValidationStatus, ValidationLevel
-
+from llm_sql_validator.result import ValidationLevel, ValidationStatus
 
 SAMPLE_SCHEMA = {
     "public": {
@@ -121,8 +120,8 @@ class TestValidationPipeline:
         assert len(pipeline.validators) == 5
 
     def test_register_custom_validator(self, pipeline):
-        from llm_sql_validator.validators.base import BaseValidator
         from llm_sql_validator.result import ValidationResult
+        from llm_sql_validator.validators.base import BaseValidator
 
         class CustomValidator(BaseValidator):
             tier = ValidationLevel.OUTPUT
