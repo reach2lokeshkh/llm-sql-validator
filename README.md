@@ -302,7 +302,7 @@ If you use this library in academic work or internal tooling, please cite:
 @software{llm_sql_validator,
   author = {Lokesh Kumar H},
   title = {llm-sql-validator: Progressive Validation Framework for LLM-Generated SQL},
-  year = {2025},
+  year = {2026},
   url = {https://github.com/reach2lokeshkh/llm-sql-validator}
 }
 ```
