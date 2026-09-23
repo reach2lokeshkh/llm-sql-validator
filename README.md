@@ -271,6 +271,48 @@ chain = llm | validated_query | db.run
 
 ---
 
+## Benchmark
+
+The claim that a *layered* validator beats any single mechanism is measured, not
+just asserted. The [`benchmarks/sql_validation`](benchmarks/sql_validation)
+directory contains a reproducible benchmark that runs this library against a
+labeled corpus of 1,800 machine-generated queries (1,500 defective, 300 clean)
+written to a declared schema, and compares it with a parse/`EXPLAIN`-only check
+and a style linter.
+
+| Validator | Precision | Recall | F1 | False-Positive Rate |
+|-----------|-----------|--------|-----|---------------------|
+| Parse / `EXPLAIN` only | 1.000 | 0.200 | 0.333 | 0.000 |
+| Style linter | 1.000 | 0.102 | 0.185 | 0.000 |
+| **llm-sql-validator (5-tier)** | **1.000** | **0.747** | **0.855** | **0.000** |
+
+Each defect class is caught at the tier responsible for it — nonexistent objects
+at the schema tier, missing filters and restricted-column access at the
+business-rules tier, destructive and cartesian statements at the safety tier.
+
+The benchmark also reports, honestly, two classes the library does **not** fully
+catch today:
+
+- **Qualified misspelled columns** (for example `o.customre_id`, where the alias
+  resolves to a real table) — the schema tier currently passes these, so its
+  detection on nonexistent-object references is 0.733 rather than perfect. See
+  [issue tracker](https://github.com/reach2lokeshkh/llm-sql-validator/issues).
+- **Semantic aggregation-grain errors** — a query that is valid, schema-correct,
+  policy-compliant, and read-only yet double-counts across a one-to-many join.
+  The library has no tier for this by design: whether such a query is "wrong"
+  depends on intent no static validator can see, so it is surfaced to a human.
+
+Reproduce it:
+
+```bash
+pip install -e ".[benchmark]"
+python benchmarks/sql_validation/run_sql_validation_experiment.py
+```
+
+All numbers come from a single seeded run (seed = 42).
+
+---
+
 ## Roadmap
 
 - [ ] v0.1 — Core 5-tier pipeline, YAML config, basic rules engine

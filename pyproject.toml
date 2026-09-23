@@ -53,6 +53,9 @@ redshift = [
 bigquery = [
     "sqlglot>=20.0.0",
 ]
+benchmark = [
+    "numpy>=1.24",
+]
 
 [project.urls]
 Homepage = "https://github.com/reach2lokeshkh/llm-sql-validator"

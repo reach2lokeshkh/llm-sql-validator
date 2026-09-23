@@ -25,10 +25,13 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -e ".[dev]"
+          pip install -e ".[dev,benchmark]"
 
       - name: Lint with ruff
         run: ruff check src/ tests/
 
       - name: Run tests
         run: pytest --cov=llm_sql_validator --cov-report=term-missing
+
+      - name: Run SQL-validation benchmark (smoke check)
+        run: python benchmarks/sql_validation/run_sql_validation_experiment.py
