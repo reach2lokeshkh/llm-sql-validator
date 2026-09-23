@@ -76,6 +76,10 @@ class SchemaValidator(BaseValidator):
             if stmt is None:
                 continue
 
+            # Map table aliases to their real table names for this statement, so a
+            # qualified reference like `o.order_id` (alias `o`) resolves to `orders`.
+            alias_to_table = self._build_alias_map(stmt)
+
             # Validate table references
             for table_node in stmt.find_all(exp.Table):
                 table_name = table_node.name.lower()
@@ -95,12 +99,14 @@ class SchemaValidator(BaseValidator):
             for col_node in stmt.find_all(exp.Column):
                 col_name = col_node.name.lower()
                 table_ref = (col_node.table or "").lower()
+                # Resolve an alias (e.g. `o`) to the underlying table (e.g. `orders`).
+                resolved_ref = alias_to_table.get(table_ref, table_ref)
 
                 if col_name in ("*",):
                     continue
 
-                if table_ref and table_ref in all_columns_by_table:
-                    table_columns = all_columns_by_table[table_ref]
+                if resolved_ref and resolved_ref in all_columns_by_table:
+                    table_columns = all_columns_by_table[resolved_ref]
                     if col_name not in table_columns:
                         suggestion = self._suggest_column(col_name, table_columns)
                         errors.append(
@@ -108,7 +114,7 @@ class SchemaValidator(BaseValidator):
                                 tier=self.tier,
                                 code="COLUMN_NOT_FOUND",
                                 message=(
-                                    f"Column '{col_name}' does not exist in table '{table_ref}'."
+                                    f"Column '{col_name}' does not exist in table '{resolved_ref}'."
                                 ),
                                 suggestion=suggestion,
                             )
@@ -146,6 +152,24 @@ class SchemaValidator(BaseValidator):
             tier=self.tier,
             metadata={"tables_validated": len(all_tables)},
         )
+
+    def _build_alias_map(self, stmt: exp.Expression) -> dict[str, str]:
+        """Map lowercased table aliases (and bare table names) to real table names.
+
+        Enables validating qualified columns such as `o.order_id` where `o` is an
+        alias for `orders`. Bare table names map to themselves so unaliased
+        qualified references (e.g. `orders.order_id`) continue to resolve.
+        """
+        alias_map: dict[str, str] = {}
+        for table_node in stmt.find_all(exp.Table):
+            real = table_node.name.lower()
+            if not real:
+                continue
+            alias_map[real] = real
+            alias = (table_node.alias or "").lower()
+            if alias:
+                alias_map[alias] = real
+        return alias_map
 
     def _get_all_tables(self, schema: dict) -> set[str]:
         """Extract all table names from the schema definition."""

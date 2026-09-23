@@ -284,19 +284,16 @@ and a style linter.
 |-----------|-----------|--------|-----|---------------------|
 | Parse / `EXPLAIN` only | 1.000 | 0.200 | 0.333 | 0.000 |
 | Style linter | 1.000 | 0.102 | 0.185 | 0.000 |
-| **llm-sql-validator (5-tier)** | **1.000** | **0.747** | **0.855** | **0.000** |
+| **llm-sql-validator (5-tier)** | **1.000** | **0.800** | **0.889** | **0.000** |
 
 Each defect class is caught at the tier responsible for it — nonexistent objects
-at the schema tier, missing filters and restricted-column access at the
-business-rules tier, destructive and cartesian statements at the safety tier.
+(including qualified misspelled columns) at the schema tier, missing filters and
+restricted-column access at the business-rules tier, destructive and cartesian
+statements at the safety tier.
 
-The benchmark also reports, honestly, two classes the library does **not** fully
-catch today:
+The benchmark also reports, honestly, the one class the library does **not**
+catch by design:
 
-- **Qualified misspelled columns** (for example `o.customre_id`, where the alias
-  resolves to a real table) — the schema tier currently passes these, so its
-  detection on nonexistent-object references is 0.733 rather than perfect. See
-  [issue tracker](https://github.com/reach2lokeshkh/llm-sql-validator/issues).
 - **Semantic aggregation-grain errors** — a query that is valid, schema-correct,
   policy-compliant, and read-only yet double-counts across a one-to-many join.
   The library has no tier for this by design: whether such a query is "wrong"

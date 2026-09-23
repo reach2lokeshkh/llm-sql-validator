@@ -102,3 +102,27 @@ class TestSchemaValidator:
         result = validator.validate(sql)
         assert not result.is_valid
         assert len(result.errors) >= 2
+
+    def test_qualified_alias_nonexistent_column(self, validator):
+        # Regression: a qualified column whose alias resolves to a real table
+        # must still be checked for existence. 'customre_id' is a typo on orders.
+        sql = "SELECT o.id FROM orders o WHERE o.customre_id = 7"
+        result = validator.validate(sql)
+        assert not result.is_valid
+        assert result.status == ValidationStatus.FAILED
+        error = next(e for e in result.errors if e.code == "COLUMN_NOT_FOUND")
+        # error should name the resolved table, not the alias
+        assert "orders" in error.message
+
+    def test_unaliased_qualified_nonexistent_column(self, validator):
+        # Qualified by the real table name (no alias) with a typo must also fail.
+        sql = "SELECT orders.amountt FROM orders"
+        result = validator.validate(sql)
+        assert not result.is_valid
+        assert any(e.code == "COLUMN_NOT_FOUND" for e in result.errors)
+
+    def test_qualified_alias_valid_column_passes(self, validator):
+        # The fix must not create false positives on valid aliased columns.
+        sql = "SELECT o.amount FROM orders o WHERE o.status = 'shipped'"
+        result = validator.validate(sql)
+        assert result.is_valid

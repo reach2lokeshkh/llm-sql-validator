@@ -8,7 +8,7 @@ The layered validator under test is the author's real open-source library `llm-s
 |-----------|-----------|--------|-----|---------------------|
 | Parse / EXPLAIN only | 1.0 | 0.2 | 0.333 | 0.0 |
 | Style linter | 1.0 | 0.102 | 0.185 | 0.0 |
-| Five-tier validator (llm-sql-validator) | 1.0 | 0.747 | 0.855 | 0.0 |
+| Five-tier validator (llm-sql-validator) | 1.0 | 0.8 | 0.889 | 0.0 |
 
 ## Detection rate by defect class
 
@@ -16,7 +16,7 @@ The layered validator under test is the author's real open-source library `llm-s
 |-----------|---|---|---|---|---|
 | Parse / EXPLAIN only | 1.0 | 0.0 | 0.0 | 0.0 | 0.0 |
 | Style linter | 0.283 | 0.0 | 0.0 | 0.227 | 0.0 |
-| Five-tier validator (llm-sql-validator) | 0.733 | 1.0 | 1.0 | 1.0 | 0.0 |
+| Five-tier validator (llm-sql-validator) | 1.0 | 1.0 | 1.0 | 1.0 | 0.0 |
 
 ## Which tier of the real library caught each defect class
 
