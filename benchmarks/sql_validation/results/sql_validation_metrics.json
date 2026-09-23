@@ -1,0 +1,74 @@
+{
+  "seed": 42,
+  "dialect": "postgres",
+  "layered_validator": "llm-sql-validator (real library, imported)",
+  "n_total": 1800,
+  "n_defect": 1500,
+  "n_clean": 300,
+  "defect_classes": [
+    "hallucinated_schema",
+    "missing_filter",
+    "forbidden_pii",
+    "unsafe_operation",
+    "wrong_join_grain"
+  ],
+  "five_tier_catch_tier_by_defect": {
+    "hallucinated_schema": "SCHEMA",
+    "unsafe_operation": "SAFETY",
+    "missing_filter": "BUSINESS_RULES",
+    "forbidden_pii": "BUSINESS_RULES"
+  },
+  "validators": {
+    "Parse / EXPLAIN only": {
+      "precision": 1.0,
+      "recall": 0.2,
+      "f1": 0.333,
+      "fp_rate": 0.0,
+      "tp": 300,
+      "fp": 0,
+      "tn": 300,
+      "fn": 1200,
+      "detection_by_defect": {
+        "hallucinated_schema": 1.0,
+        "unsafe_operation": 0.0,
+        "missing_filter": 0.0,
+        "wrong_join_grain": 0.0,
+        "forbidden_pii": 0.0
+      }
+    },
+    "Style linter": {
+      "precision": 1.0,
+      "recall": 0.102,
+      "f1": 0.185,
+      "fp_rate": 0.0,
+      "tp": 153,
+      "fp": 0,
+      "tn": 300,
+      "fn": 1347,
+      "detection_by_defect": {
+        "hallucinated_schema": 0.283,
+        "unsafe_operation": 0.227,
+        "missing_filter": 0.0,
+        "wrong_join_grain": 0.0,
+        "forbidden_pii": 0.0
+      }
+    },
+    "Five-tier validator (llm-sql-validator)": {
+      "precision": 1.0,
+      "recall": 0.747,
+      "f1": 0.855,
+      "fp_rate": 0.0,
+      "tp": 1120,
+      "fp": 0,
+      "tn": 300,
+      "fn": 380,
+      "detection_by_defect": {
+        "hallucinated_schema": 0.733,
+        "unsafe_operation": 1.0,
+        "missing_filter": 1.0,
+        "wrong_join_grain": 0.0,
+        "forbidden_pii": 1.0
+      }
+    }
+  }
+}
